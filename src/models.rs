@@ -26,24 +26,25 @@ impl Ops {
     }
 }
 
+/// Trade is the Op for any trade returned.
 #[derive(Archive, Deserialize, Serialize, Debug, PartialEq)]
 pub struct Trade {
-    symbol: String,
-    most_recent_trade: f64,
-    most_recent_trade_size: i32,
-    most_recent_trade_time: i128,
-    most_recent_trade_market_center: i32,
-    total_volume: i32,
-    bid: Option<f64>,
-    bid_size: Option<i32>,
-    ask: Option<f64>,
-    ask_size: Option<i32>,
-    open: Option<f64>,
-    high: Option<f64>,
-    low: Option<f64>,
-    close: Option<f64>,
-    message_contents: String,
-    most_recent_trade_conditions: String,
+    pub symbol: String,
+    pub most_recent_trade: f64,
+    pub most_recent_trade_size: i32,
+    pub most_recent_trade_time: i128,
+    pub most_recent_trade_market_center: i32,
+    pub total_volume: i32,
+    pub bid: Option<f64>,
+    pub bid_size: Option<i32>,
+    pub ask: Option<f64>,
+    pub ask_size: Option<i32>,
+    pub open: Option<f64>,
+    pub high: Option<f64>,
+    pub low: Option<f64>,
+    pub close: Option<f64>,
+    pub message_contents: String,
+    pub most_recent_trade_conditions: String,
 }
 
 impl Trade {
