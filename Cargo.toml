@@ -14,3 +14,6 @@ rkyv = "0.4.1"
 memmem = "0.1.1"
 async-channel = "1.6.1"
 time = { git = "https://github.com/time-rs/time", branch = "main", features = ["parsing"] }
+
+[dev-dependencies]
+tokio = { version = "1.4.0", features = ["full"] }

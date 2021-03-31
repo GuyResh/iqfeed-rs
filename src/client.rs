@@ -22,12 +22,15 @@ impl IQFeed {
     /// # Errors
     ///
     /// # Examples
-    /// ```
-    /// # use iqfeed_rs::client::IQFeed;
+    /// ```no_run
     /// use async_channel::unbounded;
+    /// use iqfeed_rs::client::IQFeed;
     ///
-    /// let (rx, tx) = unbounded();
-    /// let client = IQFeed::new(rx, "localhost:5009")?;
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let (rx, tx) = unbounded();
+    ///     let client = IQFeed::new(rx, "localhost:5009").await.unwrap();
+    /// }
     /// ```
     pub async fn new(tx: Sender<Vec<u8>>, addr: &str) -> Result<Self, ClientError> {
         let mut stream = TcpStream::connect(addr).await?;
@@ -47,16 +50,18 @@ impl IQFeed {
     /// errors with watching the symbol will occur when `process` is called.
     ///
     /// # Examples
-    /// ```
-    /// # use iqfeed_rs::client::IQFeed;
+    /// ```no_run
     /// use async_channel::unbounded;
+    /// use iqfeed_rs::client::IQFeed;
     ///
-    /// let (rx, tx) = unbounded();
-    /// let client = IQFeed::new(rx, "localhost:5009").await?;
-    ///
-    /// client.watch_trades("PLTR").await?;
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let (rx, tx) = unbounded();
+    ///     let mut client = IQFeed::new(rx, "localhost:5009").await.unwrap();
+    ///     client.watch_trades("PLTR").await.unwrap();
+    /// }
     /// ```
-    pub async fn watch_trades(mut self, symbol: &str) -> Result<(), ClientError> {
+    pub async fn watch_trades(&mut self, symbol: &str) -> Result<(), ClientError> {
         let command = format!("w{}\n", symbol.to_uppercase());
         Ok(self.stream.write_all(command.as_bytes()).await?)
     }
@@ -68,17 +73,20 @@ impl IQFeed {
     /// This will return an error if the Sender channel is closed.
     ///
     /// # Examples
-    /// ```
-    /// # use iqfeed_rs::client::IQFeed;
+    /// ```no_run
     /// use async_channel::unbounded;
+    /// use iqfeed_rs::client::IQFeed;
     ///
-    /// let (rx, tx) = unbounded();
-    /// let client = IQFeed::new(rx, "localhost:5009").await?;
-    /// client.watch_trades("PLTR").await?;
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let (rx, tx) = unbounded();
+    ///     let mut client = IQFeed::new(rx, "localhost:5009").await.unwrap();
+    ///     client.watch_trades("PLTR").await.unwrap();
     ///
-    /// // Spawning a tokio task to run the process is the best way as
-    /// // ideally you would have multiple connections to the IQFeed client
-    /// tokio::spawn(async move { client.process() });
+    ///     // Spawning a tokio task to run the process is the best way as
+    ///     // ideally you would have multiple connections to the IQFeed client
+    ///     tokio::spawn(async move { client.process() });
+    /// }
     /// ```
     pub async fn process(mut self) -> Result<(), ClientError> {
         let mut buf = vec![0; 2048];

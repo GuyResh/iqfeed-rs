@@ -56,18 +56,28 @@ impl Trade {
     /// # Panics
     /// This will panic if there's an issue creating a format desc. Will be
     /// removed at some point.
+    ///
+    /// # Example
+    /// ```
+    /// # use iqfeed_rs::models::Ops;
+    /// # let src = b"Q,GME,190.0000,1,16:40:18.814943,19,8346145,189.56,190.0000,300,197.500,199.4600.187.1102,O,8717";
+    /// let trade = Ops::parse(src).unwrap();
+    /// ```
     pub fn parse(msg: &[&str]) -> Result<Self, ParsingError> {
-        // TODO: Move this to a oncecell maybe.c
-        let tod = time::format_description::parse("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond]").unwrap();
+        // TODO: Move this to a oncecell maybe.
+        let tod = time::format_description::parse("[year].[month].[day] [hour]:[minute]:[second].[subsecond digits:9]")
+            .unwrap();
         let today = time::OffsetDateTime::now_utc();
+
         Ok(Self {
             symbol: msg[1].into(),
             most_recent_trade: parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
             most_recent_trade_time: time::OffsetDateTime::parse(
-                &format!("{}-{}-{} {}000 -0400", today.year(), today.month(), today.day(), msg[4]),
+                &format!("{}.{}.{} {}000", today.year(), today.month(), today.day(), msg[4]),
                 &tod,
-            )?
+            )
+            .unwrap()
             .to_offset(time::UtcOffset::UTC)
             .unix_timestamp_nanos(),
             most_recent_trade_market_center: parse(msg[5])?,
