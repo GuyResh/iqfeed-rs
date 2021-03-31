@@ -7,6 +7,7 @@ use crate::errors::ParsingError;
 
 pub enum Ops {
     Trade(Trade),
+    Timestamp,
     None,
 }
 

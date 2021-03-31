@@ -4,6 +4,8 @@ use lexical::{Error, ErrorCode};
 use thiserror::Error;
 use tokio::io;
 
+/// `ParsingError` is an error returned from anything having to do with parsing
+/// data.
 #[derive(Error, Debug)]
 pub enum ParsingError {
     #[error("error parsing number: {0}")]
@@ -37,6 +39,8 @@ impl From<lexical::Error> for ParsingError {
     }
 }
 
+/// `ClientError` is returned from anything having to do with processing data
+/// from IQFeed's client to sending to the channel.
 #[derive(Error, Debug)]
 pub enum ClientError {
     #[error("error parsing number")]

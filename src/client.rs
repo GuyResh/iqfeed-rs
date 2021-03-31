@@ -17,11 +17,20 @@ pub struct IQFeed {
 }
 
 impl IQFeed {
-    /// Created a new IQFeed Client connection
+    /// Created a new `IQFeed` Client connection, and sets the protocol to 6.2.
     ///
     /// # Errors
-    pub async fn new(tx: Sender<Vec<u8>>) -> Result<Self, ClientError> {
-        let mut stream = TcpStream::connect("").await?;
+    ///
+    /// # Examples
+    /// ```
+    /// # use iqfeed_rs::client::IQFeed;
+    /// use async_channel::unbounded;
+    ///
+    /// let (rx, tx) = unbounded();
+    /// let client = IQFeed::new(rx, "localhost:5009")?;
+    /// ```
+    pub async fn new(tx: Sender<Vec<u8>>, addr: &str) -> Result<Self, ClientError> {
+        let mut stream = TcpStream::connect(addr).await?;
         stream.write_all(b"S,SET PROTOCOL,6.2\n").await?;
         Ok(Self {
             stream,
@@ -36,6 +45,17 @@ impl IQFeed {
     /// # Errors
     /// This will only error if there's an issue with the `TCPStream`. Any
     /// errors with watching the symbol will occur when `process` is called.
+    ///
+    /// # Examples
+    /// ```
+    /// # use iqfeed_rs::client::IQFeed;
+    /// use async_channel::unbounded;
+    ///
+    /// let (rx, tx) = unbounded();
+    /// let client = IQFeed::new(rx, "localhost:5009").await?;
+    ///
+    /// client.watch_trades("PLTR").await?;
+    /// ```
     pub async fn watch_trades(mut self, symbol: &str) -> Result<(), ClientError> {
         let command = format!("w{}\n", symbol.to_uppercase());
         Ok(self.stream.write_all(command.as_bytes()).await?)
@@ -46,6 +66,20 @@ impl IQFeed {
     ///
     /// # Errors
     /// This will return an error if the Sender channel is closed.
+    ///
+    /// # Examples
+    /// ```
+    /// # use iqfeed_rs::client::IQFeed;
+    /// use async_channel::unbounded;
+    ///
+    /// let (rx, tx) = unbounded();
+    /// let client = IQFeed::new(rx, "localhost:5009").await?;
+    /// client.watch_trades("PLTR").await?;
+    ///
+    /// // Spawning a tokio task to run the process is the best way as
+    /// // ideally you would have multiple connections to the IQFeed client
+    /// tokio::spawn(async move { client.process() });
+    /// ```
     pub async fn process(mut self) -> Result<(), ClientError> {
         let mut buf = vec![0; 2048];
         let mut scan_read = 0;
