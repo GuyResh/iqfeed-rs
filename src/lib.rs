@@ -1,8 +1,8 @@
-//! A IQFeed client written in Rust.
+//! A `IQFeed` client written in Rust.
 //!
 //! This crate was originally written for use at Oxide Financial and thus there
-//! may not be 100% coverage of what data IQFeed provides. However overtime and
-//! on request we will attempt to add any features/data that are not already
+//! may not be 100% coverage of what data `IQFeed` provides. However overtime
+//! and on request we will attempt to add any features/data that are not already
 //! implemented.
 //!
 //! By default iqfeed-rs pulls in `rkyv` for use on all [`models::Ops`]. This is

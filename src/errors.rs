@@ -40,7 +40,7 @@ impl From<lexical::Error> for ParsingError {
 }
 
 /// `ClientError` is returned from anything having to do with processing data
-/// from IQFeed's client to sending to the channel.
+/// from `IQFeed`'s client to sending to the channel.
 #[derive(Error, Debug)]
 pub enum ClientError {
     #[error("error parsing number")]
