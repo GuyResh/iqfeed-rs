@@ -68,13 +68,11 @@ pub struct Trade {
 
 impl Trade {
     fn parse(msg: &[&str]) -> Result<Self, ParsingError> {
-        let today = time::OffsetDateTime::now_utc();
-
         Ok(Self {
             symbol: msg[1].into(),
             most_recent_trade: parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
-            most_recent_trade_time: today
+            most_recent_trade_time: time::OffsetDateTime::now_utc()
                 .replace_time(time::Time::parse(msg[4], &TIME_PARSER.as_ref())?)
                 .to_offset(time::UtcOffset::UTC)
                 .unix_timestamp_nanos(),
