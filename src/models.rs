@@ -1,4 +1,4 @@
-use std::str::from_utf8;
+use std::str::from_utf8_unchecked;
 
 use lexical::parse;
 use once_cell::sync::Lazy;
@@ -41,7 +41,7 @@ impl Ops {
     /// ```
     #[allow(clippy::match_on_vec_items)]
     pub fn parse(src: &[u8]) -> Result<Self, ParsingError> {
-        let msg: Vec<&str> = from_utf8(src)?.split(',').collect();
+        let msg: Vec<&str> = unsafe { from_utf8_unchecked(src).split(',').collect() };
 
         match msg[0] {
             "Q" => Ok(Self::Trade(Trade::parse(&msg)?)),
