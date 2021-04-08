@@ -36,7 +36,7 @@ impl Ops {
     /// ```
     #[allow(clippy::match_on_vec_items)]
     pub fn parse(src: &[u8]) -> Result<Self, ParsingError> {
-        let msg = from_utf8(src)?.split(',').collect::<Vec<_>>();
+        let msg: Vec<&str> = from_utf8(src)?.split(',').collect();
 
         match msg[0] {
             "Q" => Ok(Self::Trade(Trade::parse(&msg)?)),
@@ -49,19 +49,19 @@ impl Ops {
 #[derive(Archive, Deserialize, Serialize, Debug, PartialEq)]
 pub struct Trade {
     pub symbol: String,
-    pub most_recent_trade: f64,
+    pub most_recent_trade: f32,
     pub most_recent_trade_size: i32,
     pub most_recent_trade_time: i128,
     pub most_recent_trade_market_center: i32,
     pub total_volume: i32,
-    pub bid: Option<f64>,
-    pub bid_size: Option<i32>,
-    pub ask: Option<f64>,
+    pub bid: Option<f32>,
+    pub bid_size: Option<f32>,
+    pub ask: Option<f32>,
     pub ask_size: Option<i32>,
-    pub open: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub close: Option<f64>,
+    pub open: Option<f32>,
+    pub high: Option<f32>,
+    pub low: Option<f32>,
+    pub close: Option<f32>,
     pub message_contents: String,
     pub most_recent_trade_conditions: String,
 }
