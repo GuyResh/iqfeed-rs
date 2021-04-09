@@ -19,7 +19,7 @@ pub enum ParsingError {
 }
 
 impl From<lexical::Error> for ParsingError {
-    fn from(e: Error) -> Self { self::ParsingError::Number(e.code) }
+    fn from(e: Error) -> Self { Self::Number(e.code) }
 }
 
 /// `ClientError` is returned from anything having to do with processing data
