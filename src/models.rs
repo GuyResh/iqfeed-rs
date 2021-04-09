@@ -1,5 +1,6 @@
 use std::str::from_utf8_unchecked;
 
+use fast_float as ff;
 use lexical::parse;
 use once_cell::sync::Lazy;
 use rkyv::{Archive, Deserialize, Serialize};
@@ -85,38 +86,14 @@ impl Trade {
                 .unix_timestamp_nanos(),
             most_recent_trade_market_center: parse(msg[5])?,
             total_volume: parse(msg[6])?,
-            bid: match msg[7] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[7])?),
-            },
-            bid_size: match msg[8] {
-                "" => None,
-                _ => Some(parse(msg[8])?),
-            },
-            ask: match msg[9] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[9])?),
-            },
-            ask_size: match msg[10] {
-                "" => None,
-                _ => Some(parse(msg[10])?),
-            },
-            open: match msg[11] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[11])?),
-            },
-            high: match msg[12] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[12])?),
-            },
-            low: match msg[13] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[13])?),
-            },
-            close: match msg[14] {
-                "" => None,
-                _ => Some(fast_float::parse(msg[14])?),
-            },
+            bid: if msg[7].is_empty() { None } else { Some(ff::parse(msg[7])?) },
+            bid_size: if msg[8].is_empty() { None } else { Some(parse(msg[8])?) },
+            ask: if msg[9].is_empty() { None } else { Some(ff::parse(msg[9])?) },
+            ask_size: if msg[10].is_empty() { None } else { Some(parse(msg[10])?) },
+            open: if msg[11].is_empty() { None } else { Some(ff::parse(msg[11])?) },
+            high: if msg[12].is_empty() { None } else { Some(ff::parse(msg[12])?) },
+            low: if msg[13].is_empty() { None } else { Some(ff::parse(msg[13])?) },
+            close: if msg[14].is_empty() { None } else { Some(ff::parse(msg[14])?) },
             message_contents: msg[15].into(),
             most_recent_trade_conditions: msg[16].into(),
         })
