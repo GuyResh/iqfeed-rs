@@ -7,12 +7,12 @@ use tokio::{
     net::TcpStream,
 };
 
-use crate::errors::Error;
+use crate::{errors::Error, models::Ops};
 
 pub struct IQFeed {
     stream: TcpStream,
     ice_breaker: TwoWaySearcher<'static>,
-    tx: Sender<Vec<u8>>,
+    tx: Sender<Ops>,
     buffer: Vec<u8>,
 }
 
@@ -32,7 +32,7 @@ impl IQFeed {
     ///     let client = IQFeed::new(rx, "localhost:5009").await.unwrap();
     /// }
     /// ```
-    pub async fn new(tx: Sender<Vec<u8>>, addr: &str) -> Result<Self, Error> {
+    pub async fn new(tx: Sender<Ops>, addr: &str) -> Result<Self, Error> {
         let mut stream = TcpStream::connect(addr).await?;
         stream.write_all(b"S,SET PROTOCOL,6.2\n").await?;
         Ok(Self {
@@ -103,7 +103,9 @@ impl IQFeed {
                         continue;
                     };
 
-                    self.tx.send(self.buffer.drain(0..(scan_read + e)).collect()).await?;
+                    self.tx
+                        .send(Ops::parse(&self.buffer.drain(0..(scan_read + e)).collect::<Vec<_>>())?)
+                        .await?;
                 } else {
                     scan_read = min(self.buffer.len() - 1, 0);
                     break;
