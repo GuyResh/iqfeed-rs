@@ -1,5 +1,3 @@
-use std::str::Utf8Error;
-
 use lexical::ErrorCode;
 use thiserror::Error;
 use tokio::io;
@@ -12,8 +10,6 @@ pub enum Error {
     Number(ErrorCode),
     #[error("error parsing time")]
     Timestamp(#[from] time::error::Parse),
-    #[error("error converting to utf")]
-    UTf8(#[from] Utf8Error),
     #[error("error parsing float")]
     Float(#[from] fast_float::Error),
     #[error("error parsing number")]
