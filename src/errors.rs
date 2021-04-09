@@ -8,8 +8,8 @@ use tokio::io;
 /// data.
 #[derive(Error, Debug)]
 pub enum ParsingError {
-    #[error("error parsing number: {0}")]
-    Number(String),
+    #[error("error parsing number")]
+    Number(ErrorCode),
     #[error("error parsing time")]
     Timestamp(#[from] time::error::Parse),
     #[error("error converting to utf")]
@@ -19,26 +19,7 @@ pub enum ParsingError {
 }
 
 impl From<lexical::Error> for ParsingError {
-    fn from(e: Error) -> Self {
-        match e.code {
-            ErrorCode::Overflow => Self::Number("overflow".into()),
-            ErrorCode::Underflow => Self::Number("underflow".into()),
-            ErrorCode::InvalidDigit => Self::Number("invalid digit".into()),
-            ErrorCode::Empty => Self::Number("empty".into()),
-            ErrorCode::EmptyMantissa => Self::Number("empty mantissa".into()),
-            ErrorCode::EmptyExponent => Self::Number("empty exponent".into()),
-            ErrorCode::EmptyInteger => Self::Number("empty integer".into()),
-            ErrorCode::EmptyFraction => Self::Number("empty fraction".into()),
-            ErrorCode::InvalidPositiveMantissaSign => Self::Number("invalid positive mantissa sign".into()),
-            ErrorCode::MissingMantissaSign => Self::Number("missing mantissa sign".into()),
-            ErrorCode::InvalidExponent => Self::Number("invalid exponent".into()),
-            ErrorCode::InvalidPositiveExponentSign => Self::Number("invalid positive exponent sign".into()),
-            ErrorCode::MissingExponentSign => Self::Number("missing exponent sign".into()),
-            ErrorCode::ExponentWithoutFraction => Self::Number("exponent without fraction".into()),
-            ErrorCode::InvalidLeadingZeros => Self::Number("invalid leading zeros".into()),
-            ErrorCode::__Nonexhaustive => Self::Number("__Nonexhaustive".into()),
-        }
-    }
+    fn from(e: Error) -> Self { self::ParsingError::Number(e.code) }
 }
 
 /// `ClientError` is returned from anything having to do with processing data
