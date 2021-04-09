@@ -6,7 +6,7 @@ use once_cell::sync::Lazy;
 use rkyv::{Archive, Deserialize, Serialize};
 use time::{format_description, OffsetDateTime, Time, UtcOffset};
 
-use crate::errors::ParsingError;
+use crate::errors::Error;
 
 pub enum Ops {
     Trade(Trade),
@@ -44,7 +44,7 @@ impl Ops {
     /// }
     /// ```
     #[allow(clippy::match_on_vec_items)]
-    pub fn parse(src: &[u8]) -> Result<Self, ParsingError> {
+    pub fn parse(src: &[u8]) -> Result<Self, Error> {
         let msg: Vec<&str> = unsafe { from_utf8_unchecked(src).split(',').collect() };
 
         match msg[0] {
@@ -78,7 +78,7 @@ pub struct Trade {
 }
 
 impl Trade {
-    fn parse(msg: &[&str]) -> Result<Self, ParsingError> {
+    fn parse(msg: &[&str]) -> Result<Self, Error> {
         Ok(Self {
             symbol: msg[1].into(),
             most_recent_trade: fast_float::parse(msg[2])?,
@@ -109,7 +109,7 @@ pub struct Timestamp {
 }
 
 impl Timestamp {
-    fn parse(msg: &[&str]) -> Result<Self, ParsingError> {
+    fn parse(msg: &[&str]) -> Result<Self, Error> {
         Ok(Self {
             timestamp: OffsetDateTime::now_utc()
                 .replace_time(Time::parse(msg[1], &PARSE_TIMESTAMP.as_ref())?)

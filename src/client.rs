@@ -7,7 +7,7 @@ use tokio::{
     net::TcpStream,
 };
 
-use crate::errors::ClientError;
+use crate::errors::Error;
 
 pub struct IQFeed {
     stream: TcpStream,
@@ -32,7 +32,7 @@ impl IQFeed {
     ///     let client = IQFeed::new(rx, "localhost:5009").await.unwrap();
     /// }
     /// ```
-    pub async fn new(tx: Sender<Vec<u8>>, addr: &str) -> Result<Self, ClientError> {
+    pub async fn new(tx: Sender<Vec<u8>>, addr: &str) -> Result<Self, Error> {
         let mut stream = TcpStream::connect(addr).await?;
         stream.write_all(b"S,SET PROTOCOL,6.2\n").await?;
         Ok(Self {
@@ -61,7 +61,7 @@ impl IQFeed {
     ///     client.watch_trades("PLTR").await.unwrap();
     /// }
     /// ```
-    pub async fn watch_trades(&mut self, symbol: &str) -> Result<(), ClientError> {
+    pub async fn watch_trades(&mut self, symbol: &str) -> Result<(), Error> {
         let command = format!("w{}\n", symbol.to_uppercase());
         Ok(self.stream.write_all(command.as_bytes()).await?)
     }
@@ -88,7 +88,7 @@ impl IQFeed {
     ///     tokio::spawn(async move { client.process() });
     /// }
     /// ```
-    pub async fn process(mut self) -> Result<(), ClientError> {
+    pub async fn process(mut self) -> Result<(), Error> {
         let mut buf = vec![0; 2048];
         let mut scan_read = 0;
 
