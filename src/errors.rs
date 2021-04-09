@@ -14,6 +14,8 @@ pub enum ParsingError {
     Timestamp(#[from] time::error::Parse),
     #[error("error converting to utf")]
     UTf8(#[from] Utf8Error),
+    #[error("error parsing float")]
+    Float(#[from] fast_float::Error),
 }
 
 impl From<lexical::Error> for ParsingError {

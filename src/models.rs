@@ -62,7 +62,7 @@ pub struct Trade {
     pub most_recent_trade_market_center: i32,
     pub total_volume: i32,
     pub bid: Option<f32>,
-    pub bid_size: Option<f32>,
+    pub bid_size: Option<i32>,
     pub ask: Option<f32>,
     pub ask_size: Option<i32>,
     pub open: Option<f32>,
@@ -77,7 +77,7 @@ impl Trade {
     fn parse(msg: &[&str]) -> Result<Self, ParsingError> {
         Ok(Self {
             symbol: msg[1].into(),
-            most_recent_trade: parse(msg[2])?,
+            most_recent_trade: fast_float::parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
             most_recent_trade_time: OffsetDateTime::now_utc()
                 .replace_time(Time::parse(msg[4], &NANO_PARSE.as_ref())?)
@@ -87,7 +87,7 @@ impl Trade {
             total_volume: parse(msg[6])?,
             bid: match msg[7] {
                 "" => None,
-                _ => Some(parse(msg[7])?),
+                _ => Some(fast_float::parse(msg[7])?),
             },
             bid_size: match msg[8] {
                 "" => None,
@@ -95,7 +95,7 @@ impl Trade {
             },
             ask: match msg[9] {
                 "" => None,
-                _ => Some(parse(msg[9])?),
+                _ => Some(fast_float::parse(msg[9])?),
             },
             ask_size: match msg[10] {
                 "" => None,
@@ -103,19 +103,19 @@ impl Trade {
             },
             open: match msg[11] {
                 "" => None,
-                _ => Some(parse(msg[11])?),
+                _ => Some(fast_float::parse(msg[11])?),
             },
             high: match msg[12] {
                 "" => None,
-                _ => Some(parse(msg[12])?),
+                _ => Some(fast_float::parse(msg[12])?),
             },
             low: match msg[13] {
                 "" => None,
-                _ => Some(parse(msg[13])?),
+                _ => Some(fast_float::parse(msg[13])?),
             },
             close: match msg[14] {
                 "" => None,
-                _ => Some(parse(msg[14])?),
+                _ => Some(fast_float::parse(msg[14])?),
             },
             message_contents: msg[15].into(),
             most_recent_trade_conditions: msg[16].into(),
