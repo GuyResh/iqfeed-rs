@@ -111,7 +111,7 @@ pub struct Timestamp {
 impl Timestamp {
     fn parse(msg: &[&str]) -> Result<Self, Error> {
         Ok(Self {
-            timestamp: OffsetDateTime::now_utc()
+            timestamp: TODAY
                 .replace_time(Time::parse(msg[1], &PARSE_TIMESTAMP.as_ref())?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
