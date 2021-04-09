@@ -21,6 +21,9 @@ static NANO_PARSE: Lazy<Vec<format_description::FormatItem>> =
 static PARSE_TIMESTAMP: Lazy<Vec<format_description::FormatItem>> =
     Lazy::new(|| format_description::parse("[year][month][day] [hour]:[minute]:[second]").unwrap());
 
+#[allow(clippy::redundant_closure)]
+static TODAY: Lazy<OffsetDateTime> = Lazy::new(|| OffsetDateTime::now_utc());
+
 impl Ops {
     /// Parses a Vec<u8> into a valid `IQFeed` parsed message
     ///
@@ -80,7 +83,7 @@ impl Trade {
             symbol: msg[1].into(),
             most_recent_trade: fast_float::parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
-            most_recent_trade_time: OffsetDateTime::now_utc()
+            most_recent_trade_time: TODAY
                 .replace_time(Time::parse(msg[4], &NANO_PARSE.as_ref())?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
