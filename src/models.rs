@@ -84,7 +84,7 @@ impl Trade {
             most_recent_trade: fast_float::parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
             most_recent_trade_time: TODAY
-                .replace_time(Time::parse(msg[4], &NANO_PARSE.as_ref())?)
+                .replace_time(Time::parse(msg[4], &NANO_PARSE)?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
             most_recent_trade_market_center: parse(msg[5])?,
@@ -112,7 +112,7 @@ impl Timestamp {
     fn parse(msg: &[&str]) -> Result<Self, Error> {
         Ok(Self {
             timestamp: TODAY
-                .replace_time(Time::parse(msg[1], &PARSE_TIMESTAMP.as_ref())?)
+                .replace_time(Time::parse(msg[1], &PARSE_TIMESTAMP)?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
         })
