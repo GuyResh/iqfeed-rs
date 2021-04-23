@@ -22,5 +22,6 @@
 #![allow(clippy::unit_arg)]
 
 pub mod client;
+pub mod connection_manager;
 pub mod errors;
 pub mod models;
