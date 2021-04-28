@@ -100,7 +100,7 @@ impl IQFeed {
                 if let Some(e) = self.ice_breaker.search_in(&self.buffer[scan_read..]) {
                     if e == 0 {
                         self.buffer.drain(0..1);
-                        continue;
+                        break;
                     };
 
                     self.tx
