@@ -1,7 +1,6 @@
 use std::cmp::min;
 
 use async_channel::Sender;
-use memmem::{Searcher, TwoWaySearcher};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
@@ -11,7 +10,6 @@ use crate::{errors::Error, models::Ops};
 
 pub struct IQFeed {
     stream: TcpStream,
-    ice_breaker: TwoWaySearcher<'static>,
     tx: Sender<Ops>,
     buffer: Vec<u8>,
 }
@@ -37,7 +35,6 @@ impl IQFeed {
         stream.write_all(b"S,SET PROTOCOL,6.2\n").await?;
         Ok(Self {
             stream,
-            ice_breaker: TwoWaySearcher::new(b"\n"),
             tx,
             buffer: Vec::new(),
         })
@@ -97,7 +94,7 @@ impl IQFeed {
             self.buffer.extend_from_slice(&buf[0..r]);
 
             loop {
-                if let Some(e) = self.ice_breaker.search_in(&self.buffer[scan_read..]) {
+                if let Some(e) = memchr::memchr(b'\n', &self.buffer[scan_read..]) {
                     if e == 0 {
                         self.buffer.drain(0..1);
                         break;
