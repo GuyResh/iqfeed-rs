@@ -8,3 +8,6 @@ This library does make use of unsafe where it gives a speed boost. We know the d
 
 ## Endpoints
 Currently there's only support for the trade events and timestamp. If you'd like support for fundamentals or any of the other data you can get feel free to open an issue and I will add it.
+
+## Use in Production
+While this is not at a 1.0.0 release I can say it was used in a live system to feed a database over a billion records a week, without issue. However still, make sure to do your testing before using this to consume data.
