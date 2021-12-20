@@ -9,19 +9,18 @@ name = "benchmarks"
 harness = false
 
 [dependencies]
-thiserror = "1.0.24"
-tokio = { version = "1.5.0", features = [ "net", "io-util" ] }
-lexical = "5.2.2"
-rkyv = "0.6.1"
-memchr = "2.4.0"
+thiserror = "1.0.30"
+tokio = { version = "1.15.0", features = [ "net", "io-util" ] }
+lexical = "6.0.1"
+rkyv = "0.7.28"
+memchr = "2.4.1"
 async-channel = "1.6.1"
-time = { git = "https://github.com/time-rs/time", branch = "main", features = ["parsing"] }
-once_cell = "1.7.2"
+time = { version = "0.3.5", features = ["parsing", "macros"] }
 fast-float = "0.2.0"
 
 [dev-dependencies]
-tokio = { version = "1.5.0", features = ["full"] }
-criterion = { version = "0.3.4", features = ["html_reports"] }
+tokio = { version = "1.15.0", features = ["full"] }
+criterion = { version = "0.3.5", features = ["html_reports"] }
 
 [profile.release]
 lto = "fat"

@@ -2,9 +2,8 @@ use std::str::from_utf8_unchecked;
 
 use fast_float as ff;
 use lexical::parse;
-use once_cell::sync::Lazy;
 use rkyv::{Archive, Deserialize, Serialize};
-use time::{format_description, OffsetDateTime, Time, UtcOffset};
+use time::{macros::format_description, OffsetDateTime, Time, UtcOffset};
 
 use crate::errors::Error;
 
@@ -14,15 +13,6 @@ pub enum Ops {
     ServerMessage,
     None,
 }
-
-static NANO_PARSE: Lazy<Vec<format_description::FormatItem>> =
-    Lazy::new(|| format_description::parse("[hour]:[minute]:[second].[subsecond digits:6]").unwrap());
-
-static PARSE_TIMESTAMP: Lazy<Vec<format_description::FormatItem>> =
-    Lazy::new(|| format_description::parse("[year][month][day] [hour]:[minute]:[second]").unwrap());
-
-#[allow(clippy::redundant_closure)]
-static TODAY: Lazy<OffsetDateTime> = Lazy::new(|| OffsetDateTime::now_utc());
 
 impl Ops {
     /// Parses a Vec<u8> into a valid `IQFeed` parsed message
@@ -83,8 +73,11 @@ impl Trade {
             symbol: msg[1].into(),
             most_recent_trade: fast_float::parse(msg[2])?,
             most_recent_trade_size: parse(msg[3])?,
-            most_recent_trade_time: TODAY
-                .replace_time(Time::parse(msg[4], &NANO_PARSE)?)
+            most_recent_trade_time: OffsetDateTime::now_utc()
+                .replace_time(Time::parse(
+                    msg[4],
+                    format_description!("[hour]:[minute]:[second].[subsecond digits:6]"),
+                )?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
             most_recent_trade_market_center: parse(msg[5])?,
@@ -111,8 +104,11 @@ pub struct Timestamp {
 impl Timestamp {
     fn parse(msg: &[&str]) -> Result<Self, Error> {
         Ok(Self {
-            timestamp: TODAY
-                .replace_time(Time::parse(msg[1], &PARSE_TIMESTAMP)?)
+            timestamp: OffsetDateTime::now_utc()
+                .replace_time(Time::parse(
+                    msg[1],
+                    format_description!("[year][month][day] [hour]:[minute]:[second]"),
+                )?)
                 .to_offset(UtcOffset::UTC)
                 .unix_timestamp_nanos(),
         })
