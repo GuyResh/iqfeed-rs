@@ -11,7 +11,7 @@ harness = false
 [dependencies]
 thiserror = "1.0.30"
 tokio = { version = "1.15.0", features = [ "net", "io-util" ] }
-lexical = "6.0.1"
+lexical = { version = "6.0.1", default-features = false, features = [ "parse-integers", "std" ] }
 rkyv = "0.7.28"
 memchr = "2.4.1"
 async-channel = "1.6.1"
